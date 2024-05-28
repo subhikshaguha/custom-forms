@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditForm from '../Form/EditForm';
 import Form from './Form';
+import { FORM_TYPE } from './constants';
 
-const Forms = (props) => {
+const Forms = ({type = 'custom_form'}) => {
   const [message, setMessage] = useState('');
   const [form, setForm] = useState({});
+  const [updatedFormProps, setUpdatedFormProps] = useState({});  
   const initialValues = {
     firstName: 'Text',
     lastName: '',
@@ -15,51 +17,44 @@ const Forms = (props) => {
     // console.log('form is tested here');
   };
 
-  const formValues = {
-    stepType: 'add_reply',
-    application: 'happyfox',
-    rawFields: [
-      {
-        isTextField: true,
-        label: 'First Name',
-        key: 'firstName',
-        isMandatory: true,
-        validateOnChange: true
-      },
-      {
-        isTextField: true,
-        label: 'Last Name',
-        key: 'lastName',
-        isMandatory: true,
-        validateOnFocusOut: true,
-        minCharacterLimit: 10,
-      },
-      {
-        isTextField: true,
-        label: 'Middle Name',
-        key: 'middleName',
-      },
-    ],
-  };
+  const onFormUpdate = (formProp, value) => {
+    if (formProp === 'isDirty') {
+      setUpdatedFormProps(prevUpdatedFormProps => ({
+        ...prevUpdatedFormProps,
+        isDirty: value
+      }));
+    }
+  }
 
   useEffect(() => {
     // formValues
+    const formValues = FORM_TYPE.find((form) => form.type === type);
     const formVal = {
-      ...formValues
+      ...formValues,
+      dataSource: {
+        firstName: "text",
+        middleName: "some name",
+        address: {
+            street: "wilford",
+            city: {
+                name: "street"
+            }
+        },
+      },
+      onFormUpdate
     }
     let formInstance = new EditForm(formVal);
     setForm(formInstance);
-  }, []);
+  }, [type]);
 
   return (
     <div className="App">
-      <h1>Add reply</h1>
 
       <Form
         submit={submit}
         initialValues={initialValues}
-        formValues={formValues}
         form={form}
+        updatedFormProps={updatedFormProps}
       />
       <p>{message}</p>
     </div>

@@ -1,15 +1,20 @@
-import { TextField } from '../Field/TextField';
-import { isNil } from 'lodash';
-import { isInvalid } from '../utilities/request.js';
+import { isNil, camelCase } from 'lodash';
+import { isInvalid } from '../utilities/request';
+import { createFields, createFieldModels } from '../utilities/FormModel';
+
 export class BaseForm {
   constructor(formValue) {
+    this.onFormUpdate = formValue.onFormUpdate;
     this.isEdit = formValue.isEdit;
     this.dataSource = formValue.dataSource || {};
     this.rawFields = formValue.rawFields;
     this.basicFieldKeys = this.rawFields.map(({ key }) => key);
-    this.fields = this.createFields(this.rawFields);
-    this.model = this.createFieldModels(this.fields);
-    this.copyFromDataSource();
+    this.fields = createFields(this, this.rawFields);
+    this.model = createFieldModels(this.fields);
+    this.component = formValue.component;
+    if (this.dataSource) {
+      this.copyFromDataSource();
+    }
   }
   submit() {
     this.resetErrors();
@@ -19,18 +24,20 @@ export class BaseForm {
           this.copyToDataSource();
           resolve();
         })
-        .catch((e) => {
+        .catch(() => {
           reject();
         });
     });
-  }
+  };
+
   resetErrors() {
     this.errors = [];
-  }
+  };
+
   reset() {
     this.errors = [];
     this.value = this.initialValue;
-  }
+  };
   validate() {
     return new Promise((resolve, reject) => {
       let validationPromises = [];
@@ -49,11 +56,31 @@ export class BaseForm {
       });
     });
   }
-  isFormDirty() {
+
+  isFieldDirty() {
     let fields = this.fields;
-    this.isDirty = fields?.some((field) => field.isDirty);
+    this.isDirty = fields?.some(field => field.isDirty);
+    if (this.onFormUpdate) {
+      this.onFormUpdate('isDirty', this.isDirty);
+    }
     return this.isDirty;
+  };
+
+  findFieldByKey(fields, key) {
+    for (let i = 0; i < fields.length; i++) {
+      let field = fields[i];
+      if (field.key === key) {
+        return field;
+      } else if (field.childFields) {
+        let childField = this.findFieldByKey(field.childFields, key);
+        if (childField) {
+          return childField;
+        }
+      }
+    }
+    return null;
   }
+
   populateErrors(errors) {
     let fields = this.fields;
     if (isInvalid(errors.status)) {
@@ -62,7 +89,7 @@ export class BaseForm {
         if (errorKey === 'nonFieldErrors') {
           this.errors = errorsPayload[errorKey];
         } else {
-          let field = fields.find((field) => field.key === errorKey);
+          let field = this.findFieldByKey(fields, camelCase(error.field));
           if (!isNil(field)) {
             field.setErrors(errorsPayload[errorKey]);
           }
@@ -70,6 +97,8 @@ export class BaseForm {
       });
     }
   }
+
+  // datasource to form
   copyFromDataSource(source = null) {
     let basicFieldKeys = this.basicFieldKeys;
     let dataSource = source || this.dataSource;
@@ -79,13 +108,37 @@ export class BaseForm {
         // To skip dynamic fields if not present
         if (field) {
           let value = dataSource[key];
-          if (!isNil(value)) {
+          if (field.isObject) {
+            let objectSource = dataSource[field.key];
+            this.copyFromDataSourceToObjectField(field, objectSource);
+            field.value = dataSource[key];
+          } else if (!isNil(value)) {
             field.value = dataSource[key];
           }
         }
       });
     }
   }
+
+  copyFromDataSourceToObjectField(field, objectSource) {
+    field.childFields.forEach((childField) => {
+      if (objectSource) {
+        let value = objectSource[childField.key];
+        if (value !== undefined && childField.isChoice && childField.choiceValueKey) {
+          let choices = childField.choices;
+          let selectedChoice = choices.find(choice => choice[childField.choiceValueKey] === value.toString());
+          childField.value = selectedChoice;
+        } else if (value !== undefined) {
+          childField.value = value;
+        }
+        if (childField.isObject) {
+          this.copyFromDataSourceToObjectField(childField, value);
+        }
+      }
+    });
+  }
+
+  // form to datasource
   copyToDataSource() {
     let dataSource = this.dataSource;
     let basicFieldKeys = this.basicFieldKeys;
@@ -97,38 +150,13 @@ export class BaseForm {
           if (this.isEdit && !field.isDirty) {
             return; // because we will be sending a PATCH request during edit.
           }
-          dataSource[key] = field.value;
+          dataSource[key] = field.getCleanValue();
         }
       });
     }
   }
+
   setDataSource(dataSource) {
     this.dataSource = dataSource;
-  }
-  createFields(rawFields) {
-    let fieldModels = [];
-    // check type of each field and create field model
-    rawFields.forEach((rawField) => {
-      fieldModels.push(this.createField(rawField));
-    });
-    return fieldModels;
-  }
-
-  createField(rawField) {
-    let rawFieldItem;
-    if (rawField.isTextField) {
-      rawFieldItem = new TextField(rawField);
-    } else {
-      rawFieldItem = new TextField(rawField);
-    }
-    return rawFieldItem;
-  }
-
-  createFieldModels(fields) {
-    let fieldModels = {};
-    fields.forEach((field) => {
-      fieldModels[field.key] = field;
-    });
-    return fieldModels;
   }
 }

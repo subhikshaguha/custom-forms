@@ -1,12 +1,12 @@
 import * as React from 'react';
 import './style.css';
-import Form from './DynamicForm';
+import DynamicForm from './DynamicForm';
 
 
 export default function App() {
   return (
     <div>
-      <Form />
+      <DynamicForm  />
     </div>
   );
 }

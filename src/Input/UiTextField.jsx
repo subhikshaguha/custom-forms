@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import BaseField from './BaseField';
+import BaseField from './UiBaseField';
 
-const TextField = ({ field, fieldUpdated }) => {
-  const [inputValue, setInputValue] = useState(field.value);
+const UiTextField = ({ field }) => {
+  const [inputValue, setInputValue] = useState(field.value || '' );
   const [errors, setErrors] = useState(field.errors);
   const {
     label,
@@ -11,7 +11,7 @@ const TextField = ({ field, fieldUpdated }) => {
   } = field;
 
   useEffect(() => {
-    setInputValue(field.value);
+    setInputValue(field.value || '');
     setErrors(field.errors);
   }, [field.value, field.errors]);
 
@@ -20,15 +20,12 @@ const TextField = ({ field, fieldUpdated }) => {
     field.updateValue(newValue);
     if (field.validateOnChange) {
       field.validate().then(() => {
-        setInputValue(newValue);
-        fieldUpdated();
+        setInputValue(newValue || '');
       }).catch(() => {
-        setInputValue(newValue);
-        fieldUpdated();
+        setInputValue(newValue || '');
       });
     } else {
       setInputValue(newValue);
-      fieldUpdated();
     }
   };
 
@@ -56,15 +53,11 @@ const TextField = ({ field, fieldUpdated }) => {
               onBlur={handleFocusOut}
             />
           </div>
-          <div className="error-message">
-            {field.errors?.map((error, index) => (
-              <span key={index}>{error}</span>
-            ))}
-          </div>
         </React.Fragment>
       }
+      errors={field.errors}
     />
   );
 };
 
-export default TextField;
+export default UiTextField;

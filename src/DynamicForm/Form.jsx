@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import TextField from '../InputField/TextField';
-
+import FormField from '../Input/FormField';
+import UiDynamicForm from './UiDynamicForm';
 
 function Form(props) {
-  const { form } = props;
+  const { form, updatedFormProps } = props;
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
+
   const onSubmit = () => {
     if (submitted) {
       setSubmitted(false);
     }
-    form.submit().then(() => {
+    form.submit().then(async() => {
       setSubmitted(true);
-      fetchUserData();
+      await fetchUserData();
+      setSubmitted(false);
     }).catch(() => {
       setSubmitted(true);
     })
@@ -21,34 +22,39 @@ function Form(props) {
 
   const fetchUserData = () => {
     setIsLoading(true);
-    fetch("https://run.mocky.io/v3/c72e27bc-e257-4a0e-8fce-738da6c13fe3")
+    // https://run.mocky.io/v3/7c368ee5-f390-4feb-a3bc-1a3e55393287 - error
+    // https://run.mocky.io/v3/0b7f2fa8-fbb9-469c-aba2-ef3a30f17e28 - error object
+    // https://run.mocky.io/v3/3c961efc-ff85-46b3-828f-39f7d00ae557 - success
+    fetch("https://run.mocky.io/v3/3c961efc-ff85-46b3-828f-39f7d00ae557")
       .then(response => {
         return response.json()
       })
       .then(data => {
-        let dataSource = data?.steps?.[0].data;
-        form.setDataSource(dataSource);
-        form.copyFromDataSource();
-        setIsLoading(false);
+        if (data?.steps?.[0]?.data) {
+          let dataSource = data?.steps?.[0].data;
+          form.setDataSource(dataSource);
+          form.copyFromDataSource();
+          setIsLoading(false);
+        } else if (data?.errors) {
+          data.status = 422;
+          form.populateErrors(data);
+          setIsLoading(false);
+        }
       })
   };
 
-  const fieldUpdated = () => {
-    const isDirty = form.isFormDirty?.();
-    setIsDirty(isDirty);
-  }
   return (
     <form className="Form">
-      {form?.fields?.map((field) => {
-        let ComponentVal = TextField;
-        if (field.isTextField) {
-          ComponentVal = TextField;
-        }
-        return (
-          <div>{field?.isTextField && <ComponentVal field={field} fieldUpdated={fieldUpdated} submitted={submitted} isLoading={isLoading} />}</div>
-        );
-      })}
-      <button type="button" onClick={() => onSubmit()} disabled={!isDirty || isLoading}>
+      {form?.component ? <UiDynamicForm component={form.component} form={form} /> :
+        <React.Fragment>
+          {form?.fields?.map((field, index) => {
+            return (
+              <FormField key={`${field.key}${index}`} field={field} />
+            );
+          })}
+        </React.Fragment>
+      }
+      <button type="button" onClick={() => onSubmit()} disabled={!updatedFormProps.isDirty || isLoading}>
         {isLoading ? 'Loading...' : 'Submit'}
       </button>
     </form>

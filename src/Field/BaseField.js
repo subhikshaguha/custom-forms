@@ -6,8 +6,9 @@ export class BaseField {
   initialValue = null;
   defaultValue = null;
 
-  constructor(fieldValue) {
+  constructor(form, fieldValue, parentField = null) {
     this.value = fieldValue.value || fieldValue.defaultValue;
+    this.form = form;
     this.initialValue = fieldValue.value;
     this.cleanValue = fieldValue.cleanValue;
     this.defaultValue = fieldValue.defaultValue;
@@ -18,6 +19,7 @@ export class BaseField {
     this.key = fieldValue.key;
     this.validateOnFocusOut = fieldValue.validateOnFocusOut;
     this.validateOnChange = fieldValue.validateOnChange;
+    this.parentField = parentField;
   }
 
   validate() {
@@ -28,6 +30,7 @@ export class BaseField {
         this.addErrors('This field is required');
         reject();
       } else {
+        this.cleanValue = this.value;
         resolve();
       }
     });
@@ -47,6 +50,11 @@ export class BaseField {
 
   isFieldDirty() {
     this.isDirty = !isEqual(this.value, this.initialValue);
+    if (this.parentField) {
+      this.parentField.isFieldDirty();
+    } else {
+      this.form.isFieldDirty();
+    }
     return this.isDirty;
   }
 
@@ -61,5 +69,9 @@ export class BaseField {
 
   clearInitialValue() {
     this.initialValue = null;
+  }
+
+  getCleanValue() {
+    return this.cleanValue;
   }
 }
