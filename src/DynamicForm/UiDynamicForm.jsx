@@ -19,7 +19,7 @@ function UiDynamicForm({ component, form }) {
   return (
     <div>
       {/* Render the dynamically loaded component */}
-      {DynamicComponent && <DynamicComponent form={form} />}
+      {componentUpdated && <DynamicComponent form={form} />}
 
     </div>
   );
