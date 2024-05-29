@@ -22,16 +22,16 @@ function Form(props) {
 
   const fetchUserData = () => {
     setIsLoading(true);
-    // https://run.mocky.io/v3/7c368ee5-f390-4feb-a3bc-1a3e55393287 - error
-    // https://run.mocky.io/v3/0b7f2fa8-fbb9-469c-aba2-ef3a30f17e28 - error object
-    // https://run.mocky.io/v3/3c961efc-ff85-46b3-828f-39f7d00ae557 - success
-    fetch("https://run.mocky.io/v3/3c961efc-ff85-46b3-828f-39f7d00ae557")
+    // https://run.mocky.io/v3/9fa06aac-a001-49fc-bc26-bea654aa5b13 - error
+    // https://run.mocky.io/v3/79c9a905-1891-4947-b40a-737738ea7b91 - success
+    fetch("https://run.mocky.io/v3/9fa06aac-a001-49fc-bc26-bea654aa5b13")
       .then(response => {
         return response.json()
       })
       .then(data => {
-        if (data?.steps?.[0]?.data) {
-          let dataSource = data?.steps?.[0].data;
+        console.log(data);
+        if (!data?.errors) {
+          let dataSource = data;
           form.setDataSource(dataSource);
           form.copyFromDataSource();
           setIsLoading(false);

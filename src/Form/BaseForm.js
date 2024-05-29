@@ -28,16 +28,16 @@ export class BaseForm {
           reject();
         });
     });
-  };
+  }
 
   resetErrors() {
     this.errors = [];
-  };
+  }
 
   reset() {
     this.errors = [];
     this.value = this.initialValue;
-  };
+  }
   validate() {
     return new Promise((resolve, reject) => {
       let validationPromises = [];
@@ -64,7 +64,7 @@ export class BaseForm {
       this.onFormUpdate('isDirty', this.isDirty);
     }
     return this.isDirty;
-  };
+  }
 
   findFieldByKey(fields, key) {
     for (let i = 0; i < fields.length; i++) {

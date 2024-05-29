@@ -6,7 +6,7 @@ const BaseField = ({ content, errors }) => {
       {content}
       <div className="error-message">
         {errors?.map((error, index) => (
-          <span key={index}>{error}</span>
+          <span className='error-field' key={index}>{error}</span>
         ))}
       </div>
     </div>

@@ -1,6 +1,6 @@
 const CUSTOM_FORMS = {
   type: "custom_form",
-  component: "./AddReply.jsx",
+  component: "./CustomForm.jsx",
   application: "happyfox",
   rawFields: [
     {

@@ -1,10 +1,10 @@
 import FormField from '../Input/FormField';
 
-const AddReply = ({ form }) => {
+const CustomForm = ({ form }) => {
 
   return (
     <div>
-      <h1>This is a custom form</h1>
+      <h5>This is a custom form</h5>
       <FormField field={form?.model?.firstName}  />
       <FormField field={form?.model?.middleName}  />
       <FormField field={form?.model?.lastName}  />
@@ -14,4 +14,4 @@ const AddReply = ({ form }) => {
   );
 };
 
-export default AddReply;
+export default CustomForm;

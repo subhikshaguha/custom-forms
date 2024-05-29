@@ -3,8 +3,7 @@ import EditForm from '../Form/EditForm';
 import Form from './Form';
 import { FORM_TYPE } from './constants';
 
-const Forms = ({type = 'custom_form'}) => {
-  const [message, setMessage] = useState('');
+const Forms = ({formType = 'custom_form'}) => {
   const [form, setForm] = useState({});
   const [updatedFormProps, setUpdatedFormProps] = useState({});  
   const initialValues = {
@@ -28,7 +27,7 @@ const Forms = ({type = 'custom_form'}) => {
 
   useEffect(() => {
     // formValues
-    const formValues = FORM_TYPE.find((form) => form.type === type);
+    const formValues = FORM_TYPE.find((form) => form.type === formType);
     const formVal = {
       ...formValues,
       dataSource: {
@@ -45,7 +44,7 @@ const Forms = ({type = 'custom_form'}) => {
     }
     let formInstance = new EditForm(formVal);
     setForm(formInstance);
-  }, [type]);
+  }, [formType]);
 
   return (
     <div className="App">
@@ -56,7 +55,6 @@ const Forms = ({type = 'custom_form'}) => {
         form={form}
         updatedFormProps={updatedFormProps}
       />
-      <p>{message}</p>
     </div>
   );
 };

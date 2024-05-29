@@ -4,3 +4,12 @@ h1, p {
 .base-input-field {
   padding: 10px;
 }
+
+.custom-form-cta {
+  margin-right: 12px;
+}
+
+.error-field {
+  font-size: 12px;
+  color: red;
+}
