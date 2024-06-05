@@ -3,7 +3,7 @@ import FormField from './FormField';
 import BaseField from './UiBaseField';
 
 const UiArrayField = ({ field }) => {
-  const [arrayField, setArrayField] = useState(field?.childFields?.length || []);
+  const [arrayField, setArrayField] = useState(field?.childFields?.length || 0);
   const addNewChildField = (e, arrField) => {
     e.preventDefault();
     let updatedArrayField = arrField.addNewChildField();
@@ -21,12 +21,12 @@ const UiArrayField = ({ field }) => {
       content={
         <React.Fragment>
           <button onClick={(e)=> addNewChildField(e, field)}>+</button>
-           {arrayField && field?.childFields?.map((childField, index) => (
+           {arrayField ? field?.childFields?.map((childField, index) => (
             <React.Fragment>
               <button onClick={(e)=> removeChildField(e, index, field)}>-</button>
               <FormField key={`${childField.key}${index}`} field={childField} />
             </React.Fragment>
-          ))}
+          )) : null}
         </React.Fragment>
       }
     />

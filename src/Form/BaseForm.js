@@ -146,7 +146,12 @@ export class BaseForm {
           if (this.isEdit && !field.isDirty) {
             return; // because we will be sending a PATCH request during edit.
           }
-          dataSource[key] = field.getCleanValue();
+          if (field.transformValue) {
+            dataSource[key] = field.transformValue(field);
+          } else {
+            dataSource[key] = field.value;
+          
+          }
         }
       });
     }

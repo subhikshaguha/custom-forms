@@ -20,6 +20,7 @@ export class BaseField {
     this.validateOnFocusOut = fieldValue.validateOnFocusOut;
     this.validateOnChange = fieldValue.validateOnChange;
     this.parentField = parentField;
+    this.transformValue = fieldValue.transformValue;
   }
 
   validate() {

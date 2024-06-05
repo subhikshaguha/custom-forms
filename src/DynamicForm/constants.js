@@ -39,7 +39,7 @@ const CUSTOM_FORMS = {
           label: "City",
           key: "city",
           childFieldsMetaInfo: [
-            { isText: true, label: "Name", key: "name", isMandatory: true },
+            { isText: true, label: "Name", key: "name" },
             { isText: true, label: "Code", key: "code" },
           ],
         },
@@ -55,7 +55,7 @@ const CUSTOM_FORMS = {
         label: 'Phone', 
         key: 'phone',
         childFieldsMetaInfo: [
-          { isText: true, label: 'Number', key: 'number', isMandatory: true },
+          { isText: true, label: 'Number', key: 'number' },
           { isText: true, label: 'Type', key: 'type' },
         ]
       }
@@ -86,6 +86,20 @@ const INBUILT_FORMS = {
       label: "Middle Name",
       key: "middleName",
     },
+    {
+      isArray: true,
+      label: 'Phones',
+      key: 'phones',
+      childFieldsMetaInfo: {
+        isObject: true, 
+        label: 'Phone', 
+        key: 'phone',
+        childFieldsMetaInfo: [
+          { isText: true, label: 'Number', key: 'number' },
+          { isText: true, label: 'Type', key: 'type' },
+        ]
+      }
+    }
   ],
 };
 
