@@ -89,7 +89,7 @@ export class BaseForm {
         if (errorKey === 'nonFieldErrors') {
           this.errors = errorsPayload[errorKey];
         } else {
-          let field = this.findFieldByKey(fields, camelCase(error.field));
+          let field = this.findFieldByKey(fields, camelCase(errorKey.field));
           if (!isNil(field)) {
             field.setErrors(errorsPayload[errorKey]);
           }
@@ -124,11 +124,7 @@ export class BaseForm {
     field.childFields.forEach((childField) => {
       if (objectSource) {
         let value = objectSource[childField.key];
-        if (value !== undefined && childField.isChoice && childField.choiceValueKey) {
-          let choices = childField.choices;
-          let selectedChoice = choices.find(choice => choice[childField.choiceValueKey] === value.toString());
-          childField.value = selectedChoice;
-        } else if (value !== undefined) {
+        if (value !== undefined) {
           childField.value = value;
         }
         if (childField.isObject) {

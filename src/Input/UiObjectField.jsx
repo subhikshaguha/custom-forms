@@ -8,6 +8,7 @@ const UiObjectField = ({ field }) => {
     <BaseField
       content={
         <React.Fragment>
+          {field.label && <div>{field.label}</div>}
           {field.childFields?.map((field, index) => (
             <FormField key={`${field.key}${index}`} field={field} />
           ))}
