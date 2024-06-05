@@ -65,11 +65,7 @@ export class ArrayField extends BaseField {
   getCleanValue() {
     return this.childFields.map(childField => {
       let cleanValue;
-      if (childField.isDynamicExtraField) {
-        cleanValue = { key: childField.key, value: childField.getCleanValue() }
-      } else {
-        cleanValue = childField.getCleanValue();
-      }
+      cleanValue = childField.getCleanValue();
       return cleanValue;
     });
   }

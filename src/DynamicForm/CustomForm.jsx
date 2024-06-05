@@ -9,6 +9,7 @@ const CustomForm = ({ form }) => {
       <FormField field={form?.model?.middleName}  />
       <FormField field={form?.model?.lastName}  />
       <FormField field={form?.model?.address}/>
+      <FormField field={form?.model?.phones}/>
       <br />
     </div>
   );

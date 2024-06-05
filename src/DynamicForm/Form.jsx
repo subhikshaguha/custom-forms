@@ -13,6 +13,7 @@ function Form(props) {
     }
     form.submit().then(async() => {
       setSubmitted(true);
+      console.log('test data source', form.dataSource);
       await fetchUserData();
       setSubmitted(false);
     }).catch(() => {

@@ -46,6 +46,20 @@ const CUSTOM_FORMS = {
         { isText: true, label: "State", key: "state" },
       ],
     },
+    {
+      isArray: true,
+      label: 'Phones',
+      key: 'phones',
+      childFieldsMetaInfo: {
+        isObject: true, 
+        label: 'Phone', 
+        key: 'phone',
+        childFieldsMetaInfo: [
+          { isText: true, label: 'Number', key: 'number', isMandatory: true },
+          { isText: true, label: 'Type', key: 'type' },
+        ]
+      }
+    }
   ],
 };
 
